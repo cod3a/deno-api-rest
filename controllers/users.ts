@@ -1,21 +1,24 @@
-import usersData from "../users.data.ts";
+import db from "../config/db.ts";
 
-const listUsers = (context: any) => {
-  context.response.body = usersData;
+const database = db.getDatabase;
+const users = database.collection("users");
+
+const listUsers = async (context: any) => {
+  const usersFromMongoDb = await users.find({});
+  context.response.body = usersFromMongoDb;
 };
 
 const addUser = async (context: any) => {
   const body = await context.request.body();
-  const user = body.value;
-  // add in memory db
-  usersData.push(user);
-  context.response.body = "{status: 'success','message': 'user added'}";
+  const user = body.value; // user from request
+  const insertedUser = await users.insertOne(user);
+  context.response.body = "{status: 'success','message': 'added in mongoDB'}";
 };
 
-const getSingleUser = (context: any) => {
+const getSingleUser = async (context: any) => {
   const userid = Number(context.params.userid);
-  const [user] = usersData.filter((user) => user.id === userid);
-  context.response.body = user;
+  const [singleUserFromMongoDb] = await users.find({ id: userid });
+  context.response.body = singleUserFromMongoDb;
 };
 
 export { addUser, getSingleUser, listUsers };
