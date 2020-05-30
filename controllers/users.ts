@@ -12,7 +12,7 @@ const addUser = async (context: any) => {
   const body = await context.request.body();
   const user = body.value; // user from request
   const insertedUser = await users.insertOne(user);
-  context.response.body = "{status: 'success','message': 'added in mongoDB'}";
+  context.response.body = {status: 'success','message': 'added in mongoDB'};
 };
 
 const getSingleUser = async (context: any) => {
